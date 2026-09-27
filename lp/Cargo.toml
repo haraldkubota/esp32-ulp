@@ -1,0 +1,31 @@
+[package]
+edition      = "2024"
+name         = "ulp-lp"
+rust-version = "1.88"
+version      = "0.1.0"
+
+# Firmware for the ESP32-C5 LP core. Not built on its own: the HP crate's
+# build.rs compiles it and embeds the resulting image.
+
+[[bin]]
+name  = "ulp-lp"
+path  = "src/main.rs"
+test  = false
+bench = false
+
+[dependencies]
+# Register definitions only (no runtime): the LP core talks to the HP RMT
+# peripheral directly.
+esp32c5 = { version = "0.4.0", default-features = false }
+
+[profile.dev]
+opt-level = "s"
+
+[profile.release]
+codegen-units = 1
+debug         = 2
+lto           = "fat"
+opt-level     = "s"
+
+# Keep this crate out of any workspace further up the tree.
+[workspace]
